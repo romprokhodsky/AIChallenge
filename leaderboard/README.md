@@ -13,23 +13,26 @@ Synthetic-data replica of a contributions leaderboard. **No** corporate or perso
 
 ## GitHub Pages
 
-The workflow `.github/workflows/leaderboard-pages.yml` builds `leaderboard/` and publishes `leaderboard/dist` to Pages.
+The workflow `.github/workflows/leaderboard-pages.yml` builds `leaderboard/` and pushes **`leaderboard/dist`** to the **`gh-pages`** branch (static hosting that avoids artifact/environment issues).
 
 **One-time setup (repo owner)**
 
-1. **Settings → Pages**
-2. Under **Build and deployment**, set **Source** to **GitHub Actions** (not “Deploy from a branch”).
-3. Push to `main` (or run the workflow manually: **Actions → Deploy leaderboard to GitHub Pages → Run workflow**).
+1. Push to **`main`** (or **Actions → Deploy leaderboard to GitHub Pages → Run workflow**). Wait until the run finishes and the **`gh-pages`** branch appears.
+2. **Settings → Pages → Build and deployment**
+3. Set **Source** to **Deploy from a branch** (not “GitHub Actions”).
+4. **Branch:** `gh-pages`, **Folder:** `/ (root)` → **Save**.
+
+If **Source** stays on **GitHub Actions** while this workflow only updates **`gh-pages`**, GitHub may still try to serve the wrong root and you will see a **404** at the project URL.
 
 **Live URL** (project site):
 
 `https://<github-username>.github.io/<repository-name>/`
 
-In **GitHub Actions**, the workflow passes **`VITE_BASE_PATH`** from `actions/configure-pages` (and **`GITHUB_REPOSITORY`** as a fallback) so `vite.config.ts` sets `base` to match the project Pages URL (e.g. `/AIChallenge/`). Local builds without those env vars use `base: './'`.
+Example: `https://romprokhodsky.github.io/AIChallenge/` — must include the **repository name** path. Opening only `https://<user>.github.io/` will not load this app.
 
-After deploy, open **`https://<user>.github.io/<repo>/`** (project site root). The root **`https://<user>.github.io/`** alone will not show this app unless the repo is `<user>.github.io`.
+CI sets **`VITE_BASE_PATH`** to `/<repo-name>/` so `vite.config.ts` matches that URL. Local builds without that env use `base: './'`.
 
-A `public/.nojekyll` file is included so GitHub Pages does not run Jekyll over the build output.
+A `public/.nojekyll` file is copied into `dist` so GitHub Pages does not run Jekyll over the Vite output.
 
 ## Project layout
 

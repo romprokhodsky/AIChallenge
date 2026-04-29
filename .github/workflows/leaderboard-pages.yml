@@ -1,5 +1,10 @@
-# Builds `leaderboard/` and deploys to GitHub Pages (same repo).
-# Requirements: Settings → Pages → Build and deployment: GitHub Actions.
+# Builds `leaderboard/` and publishes static files to the `gh-pages` branch.
+# GitHub Pages then serves that branch at https://<user>.github.io/<repo>/
+#
+# One-time (repo owner): Settings → Pages → Build and deployment → Source:
+#   "Deploy from a branch" → Branch: gh-pages → Folder: / (root)
+# (If Source was "GitHub Actions", switch to the branch above — otherwise GitHub
+# keeps looking for index.html in the repo root and shows 404.)
 name: Deploy leaderboard to GitHub Pages
 
 on:
@@ -8,56 +13,44 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
   group: 'pages'
-  # Let in-flight deployments finish so Pages never ends up without a successful artifact
   cancel-in-progress: false
 
 jobs:
-  build:
+  build-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
-        id: pages
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
           cache-dependency-path: leaderboard/package-lock.json
-      # Pass repo + Pages base_path explicitly so Vite `base` always matches the deployed URL
+
       - name: Install and build
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
-          VITE_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          # Project site path must match repo name (same as configure-pages base_path)
+          VITE_BASE_PATH: ${{ format('/{0}/', github.event.repository.name) }}
         run: |
+          set -e
           cd leaderboard
           npm ci
           npm run build
-      - name: Verify build output
-        run: |
-          test -f leaderboard/dist/index.html
-          ls -la leaderboard/dist
-      # Same markup as index.html — GitHub Pages serves this for unknown paths (SPA refresh/bookmarks)
-      - name: Copy index.html to 404.html
-        run: cp leaderboard/dist/index.html leaderboard/dist/404.html
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+          cp dist/index.html dist/404.html
+          # Ensure Jekyll is skipped on Pages (Vite may omit dotfiles from public/)
+          if [ -f public/.nojekyll ]; then cp public/.nojekyll dist/.nojekyll; else touch dist/.nojekyll; fi
+          test -f dist/index.html
+          ls -la dist
+
+      - name: Push dist to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         with:
-          path: leaderboard/dist
-          # Default excludes dotfiles; we need .nojekyll so Pages does not run Jekyll on the Vite output.
-          include-hidden-files: true
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deploy
-        uses: actions/deploy-pages@v5
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./leaderboard/dist
+          force_orphan: true
