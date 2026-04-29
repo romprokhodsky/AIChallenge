@@ -25,7 +25,9 @@ The workflow `.github/workflows/leaderboard-pages.yml` builds `leaderboard/` and
 
 `https://<github-username>.github.io/<repository-name>/`
 
-In **GitHub Actions**, `vite.config.ts` sets `base` to `/<repository-name>/` using `GITHUB_REPOSITORY` so JS/CSS load correctly on project Pages URLs (the trailing-slash vs relative `./` issue). Local builds without that env still use `base: './'`.
+In **GitHub Actions**, the workflow passes **`VITE_BASE_PATH`** from `actions/configure-pages` (and **`GITHUB_REPOSITORY`** as a fallback) so `vite.config.ts` sets `base` to match the project Pages URL (e.g. `/AIChallenge/`). Local builds without those env vars use `base: './'`.
+
+After deploy, open **`https://<user>.github.io/<repo>/`** (project site root). The root **`https://<user>.github.io/`** alone will not show this app unless the repo is `<user>.github.io`.
 
 A `public/.nojekyll` file is included so GitHub Pages does not run Jekyll over the build output.
 

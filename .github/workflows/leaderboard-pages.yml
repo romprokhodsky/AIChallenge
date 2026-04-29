@@ -14,7 +14,8 @@ permissions:
 
 concurrency:
   group: 'pages'
-  cancel-in-progress: true
+  # Let in-flight deployments finish so Pages never ends up without a successful artifact
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -22,17 +23,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+        id: pages
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
           cache-dependency-path: leaderboard/package-lock.json
-      # GITHUB_REPOSITORY is set by Actions (owner/repo); Vite uses it for base: /<repo>/
+      # Pass repo + Pages base_path explicitly so Vite `base` always matches the deployed URL
       - name: Install and build
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          VITE_BASE_PATH: ${{ steps.pages.outputs.base_path }}
         run: |
           cd leaderboard
           npm ci
           npm run build
+      - name: Verify build output
+        run: |
+          test -f leaderboard/dist/index.html
+          ls -la leaderboard/dist
+      # Same markup as index.html — GitHub Pages serves this for unknown paths (SPA refresh/bookmarks)
+      - name: Copy index.html to 404.html
+        run: cp leaderboard/dist/index.html leaderboard/dist/404.html
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
