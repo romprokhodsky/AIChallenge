@@ -16,7 +16,7 @@ Replicate a corporate leaderboard UI in a public repository without using real e
    - one **expanded** row at a time with a **category breakdown** (outline icons: Education, Public speaking, University Partnership) and a **RECENT ACTIVITY** table.
 4. **Styling** — **CSS** variables, spacing, and colors are tuned to match the reference screenshots; **no** component library was used to keep the bundle small and the layout controllable.
 5. **Icons** — Search, stars, and chevrons use **Font Awesome**; category strips use **Lucide-style** outline SVGs (graduation cap, presentation screen, smile) at a consistent size and stroke weight.
-6. **GitHub Pages** — CI sets `VITE_BASE_PATH` to `/<repo>/` so assets resolve on the project site; locally `base` is `./`. A workflow builds `leaderboard/dist` and pushes it to the **`gh-pages`** branch for Pages (**Settings → Deploy from branch → `gh-pages` / root**).
+6. **GitHub Pages** — CI sets `VITE_BASE_PATH` to `/<repo>/` so assets resolve on the project site; locally `base` is `./`. A workflow builds `leaderboard/dist`, deploys via **GitHub Actions Pages** (artifact + `deploy-pages`), and mirrors the same build to the **`gh-pages`** branch.
 
 ## Vibe-coding and AI workflow
 
@@ -42,7 +42,7 @@ The app was built with **AI-assisted “vibe-coding” in Cursor**: short loops 
 | UI | React 19, TypeScript |
 | Build | Vite 8 |
 | Icons | Font Awesome + inline SVG (Lucide-aligned outlines for categories) |
-| Version control / hosting | Git, GitHub, GitHub Pages (`gh-pages` branch via Actions) |
+| Version control / hosting | Git, GitHub, GitHub Pages (Actions deploy + optional `gh-pages` branch) |
 
 ## How to run locally
 

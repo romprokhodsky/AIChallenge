@@ -1,10 +1,6 @@
-# Builds `leaderboard/` and publishes static files to the `gh-pages` branch.
-# GitHub Pages then serves that branch at https://<user>.github.io/<repo>/
-#
-# One-time (repo owner): Settings → Pages → Build and deployment → Source:
-#   "Deploy from a branch" → Branch: gh-pages → Folder: / (root)
-# (If Source was "GitHub Actions", switch to the branch above — otherwise GitHub
-# keeps looking for index.html in the repo root and shows 404.)
+# Builds `leaderboard/` and deploys in two ways so the site stays up regardless of Pages settings:
+# 1) GitHub Actions → Pages (upload-pages-artifact + deploy-pages) — use Settings → Source: GitHub Actions
+# 2) gh-pages branch (peaceiris) — optional; use Source: Deploy from branch → gh-pages / (root)
 name: Deploy leaderboard to GitHub Pages
 
 on:
@@ -14,16 +10,21 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 concurrency:
   group: 'pages'
   cancel-in-progress: false
 
 jobs:
-  build-deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - uses: actions/configure-pages@v5
+        id: pages
 
       - uses: actions/setup-node@v4
         with:
@@ -34,7 +35,6 @@ jobs:
       - name: Install and build
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
-          # Project site path must match repo name (same as configure-pages base_path)
           VITE_BASE_PATH: ${{ format('/{0}/', github.event.repository.name) }}
         run: |
           set -e
@@ -42,15 +42,34 @@ jobs:
           npm ci
           npm run build
           cp dist/index.html dist/404.html
-          # Ensure Jekyll is skipped on Pages (Vite may omit dotfiles from public/)
           if [ -f public/.nojekyll ]; then cp public/.nojekyll dist/.nojekyll; else touch dist/.nojekyll; fi
           test -f dist/index.html
           ls -la dist
 
-      - name: Push dist to gh-pages branch
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: leaderboard/dist
+          include-hidden-files: true
+
+      - name: Mirror dist to gh-pages branch
         uses: peaceiris/actions-gh-pages@v4
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./leaderboard/dist
           force_orphan: true
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
