@@ -18,6 +18,15 @@ Replicate a corporate leaderboard UI in a public repository without using real e
 5. **Icons** — Search, stars, and chevrons use **Font Awesome**; category strips use **Lucide-style** outline SVGs (graduation cap, presentation screen, smile) at a consistent size and stroke weight.
 6. **GitHub Pages** — `vite.config.ts` sets `base: './'` so **relative** asset URLs work from the Pages URL. A workflow under `.github/workflows/` (if present) builds and publishes `leaderboard/dist`.
 
+## Vibe-coding and AI workflow
+
+The app was built with **AI-assisted “vibe-coding” in Cursor**: short loops of **prompt → implement → compare to reference screenshots → refine**, instead of a single frozen specification up front.
+
+- **Screenshot-driven iteration** — Layout, spacing, filters, podium, list rows, expanded activity blocks, icons, and accordion affordances were **iterated against reference screenshots** until the UI matched the intended design closely enough to ship. Where something looked wrong, the next step was usually another tight prompt plus a visual check—not a big redesign doc.
+- **No sensitive data in the repo** — **Real employee photos and production identifiers were not used.** Reference captures that contained identifiable imagery were **not pasted into the codebase**; this write-up and the app rely on **fully synthetic** people and **generic stock avatars** only, so nothing sensitive travels with the public GitHub Pages build.
+- **BMAD vs plain prompting** — Both styles were tried: **BMAD-style** flows (agent skills, structured prompts, story-shaped execution) helped for consistency on documentation and larger edits; **plain prompting** (direct chat/agent instructions) was faster for CSS and small UI tweaks. The final code reflects a mix of those passes rather than a single methodology.
+- **Models used** — Sessions rotated across **several Cursor backends**, including among others **Composer 2 Fast**, **GPT‑5.3 Codex**, and **GPT‑5.5 Medium**, depending on whether the step needed a quick edit or a deeper pass. *Exact model picks varied by session; check your Cursor chat/agent headers if you need a precise audit trail.*
+
 ## Data replacement
 
 - **Names** — Western/European–style first and last names combined per row (e.g. *James Bergström*, *Olga Kowalski*), chosen for plausibility only, not to represent real individuals.
@@ -47,6 +56,4 @@ npm run dev
 
 After enabling GitHub Pages on this repository, add the public URL here:
 
-**Live URL:** `https://<user>.github.io/<repo>/` (or your custom domain)
-
-Replace `<user>` and `<repo>` after the first successful deploy.
+**Live URL:** `https://romprokhodsky.github.io/AIChallenge/` 
