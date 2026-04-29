@@ -737,11 +737,12 @@
   color: #111827;
 }
 
+/* Row header: hug icons toward the divider (right), not centered when only 1–2 categories show */
 .lb-catstrip--compact {
   width: 104px;
-  justify-content: center;
+  justify-content: flex-end;
   gap: 16px;
-  align-items: center;
+  align-items: flex-end;
 }
 .lb-catstrip--compact .lb-catstrip__item {
   min-width: 22px;
