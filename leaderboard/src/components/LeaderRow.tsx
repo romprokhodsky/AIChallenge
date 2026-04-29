@@ -1,6 +1,6 @@
 import type { PersonRanked } from '../types';
 import { fullName } from '../format';
-import { StarIcon, ChevronDown, ChevronUp } from '../icons';
+import { StarIcon, AccordionChevronIcon } from '../icons';
 import { CategoryStrip } from './CategoryStrip';
 import { ActivityTable } from './ActivityTable';
 
@@ -48,7 +48,7 @@ export function LeaderRow({
           onClick={onToggle}
           aria-expanded={expanded}
         >
-          {expanded ? <ChevronUp /> : <ChevronDown />}
+          <AccordionChevronIcon expanded={expanded} />
         </button>
       </div>
       {expanded && (

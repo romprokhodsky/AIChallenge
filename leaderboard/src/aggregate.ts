@@ -3,6 +3,7 @@ import {
   type QuarterFilter,
   type YearFilter,
   activityInQuarter,
+  emptyCategoryBreakdown,
 } from './types';
 import { fullName } from './format';
 
@@ -64,11 +65,7 @@ export function buildRanked(
     );
     if (visible.length === 0) continue;
     const totalPoints = visible.reduce((s, a) => s + a.points, 0);
-    const categoryBreakdown: Record<CategoryId, number> = {
-      Education: 0,
-      PublicSpeaking: 0,
-      UniversityPartners: 0,
-    };
+    const categoryBreakdown = emptyCategoryBreakdown();
     for (const a of visible) {
       categoryBreakdown[a.category] += 1;
     }

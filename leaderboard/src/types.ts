@@ -1,17 +1,40 @@
-export type CategoryId = 'Education' | 'PublicSpeaking' | 'UniversityPartners';
+/** Contribution leaderboard categories (IDs match stable keys in data and filters). */
+export type CategoryId =
+  | 'Education'
+  | 'PublicSpeaking'
+  | 'UniversityPartnership';
 
-export const CATEGORY_FILTER_OPTIONS: { id: CategoryId | 'All'; label: string }[] = [
+/** Display order used in filters, breakdown strip, and aggregates. */
+export const CATEGORY_IDS: readonly CategoryId[] = [
+  'Education',
+  'PublicSpeaking',
+  'UniversityPartnership',
+] as const;
+
+export const CATEGORY_FILTER_OPTIONS: {
+  id: CategoryId | 'All';
+  label: string;
+}[] = [
   { id: 'All', label: 'All Categories' },
   { id: 'Education', label: 'Education' },
   { id: 'PublicSpeaking', label: 'Public Speaking' },
-  { id: 'UniversityPartners', label: 'University Partners' },
+  { id: 'UniversityPartnership', label: 'University Partnership' },
 ];
 
 export const CATEGORY_LABEL: Record<CategoryId, string> = {
   Education: 'Education',
   PublicSpeaking: 'Public Speaking',
-  UniversityPartners: 'University Partners',
+  UniversityPartnership: 'University Partnership',
 };
+
+/** Zeroed counts for each category (ranked-row breakdown). */
+export function emptyCategoryBreakdown(): Record<CategoryId, number> {
+  return {
+    Education: 0,
+    PublicSpeaking: 0,
+    UniversityPartnership: 0,
+  };
+}
 
 export interface Activity {
   id: string;

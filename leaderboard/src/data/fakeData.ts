@@ -32,7 +32,7 @@ const REG = [
 const cats: CategoryId[] = [
   'Education',
   'PublicSpeaking',
-  'UniversityPartners',
+  'UniversityPartnership',
 ];
 const TITLES = [
   'Senior Software Engineer',
@@ -68,7 +68,11 @@ function makeActivity(emp: number, i: number, year: number): Activity {
   const m = ri(0, 11);
   const day = ri(1, 28);
   const p =
-    category === 'Education' ? 64 : category === 'PublicSpeaking' ? 32 : 8;
+    category === 'Education'
+      ? 64
+      : category === 'PublicSpeaking'
+        ? 32
+        : 8;
   const wobble = [8, 16, 32, 64, 4];
   const base = p + wobble[ri(0, wobble.length - 1)];
   const pre = pick([...PRE]);
