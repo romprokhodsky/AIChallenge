@@ -13,14 +13,19 @@ Synthetic-data replica of a contributions leaderboard. **No** corporate or perso
 
 ## GitHub Pages
 
-- **Base URL** — The app is built with Vite `base: './'` so it can be served from a subpath.
-- In the repo, open **Settings → Pages** and set the **source** to **GitHub Actions** if you use the provided workflow, or deploy the `dist` folder of `leaderboard/` to the `gh-pages` branch (e.g. with [peaceiris/actions-gh-pages](https://github.com/peaceiris/actions-gh-pages)).
+The workflow `.github/workflows/leaderboard-pages.yml` builds `leaderboard/` and publishes `leaderboard/dist` to Pages.
 
-**After deploy, your app URL** will be along the lines of:
+**One-time setup (repo owner)**
+
+1. **Settings → Pages**
+2. Under **Build and deployment**, set **Source** to **GitHub Actions** (not “Deploy from a branch”).
+3. Push to `main` (or run the workflow manually: **Actions → Deploy leaderboard to GitHub Pages → Run workflow**).
+
+**Live URL** (project site):
 
 `https://<github-username>.github.io/<repository-name>/`
 
-If the app lives in a **subfolder of the default branch** (e.g. only `leaderboard/`), the workflow in `.github/workflows/` is scoped to that folder; adjust paths if the repo root is the app.
+The app uses Vite `base: './'` so assets load correctly under that subpath. A `public/.nojekyll` file is included so GitHub Pages does not run Jekyll over the build output.
 
 ## Project layout
 
