@@ -25,7 +25,9 @@ The workflow `.github/workflows/leaderboard-pages.yml` builds `leaderboard/` and
 
 `https://<github-username>.github.io/<repository-name>/`
 
-The app uses Vite `base: './'` so assets load correctly under that subpath. A `public/.nojekyll` file is included so GitHub Pages does not run Jekyll over the build output.
+In **GitHub Actions**, `vite.config.ts` sets `base` to `/<repository-name>/` using `GITHUB_REPOSITORY` so JS/CSS load correctly on project Pages URLs (the trailing-slash vs relative `./` issue). Local builds without that env still use `base: './'`.
+
+A `public/.nojekyll` file is included so GitHub Pages does not run Jekyll over the build output.
 
 ## Project layout
 

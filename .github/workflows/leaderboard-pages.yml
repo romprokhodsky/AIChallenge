@@ -26,6 +26,7 @@ jobs:
           node-version: 22
           cache: npm
           cache-dependency-path: leaderboard/package-lock.json
+      # GITHUB_REPOSITORY is set by Actions (owner/repo); Vite uses it for base: /<repo>/
       - name: Install and build
         run: |
           cd leaderboard
